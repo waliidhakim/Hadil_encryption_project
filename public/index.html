@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiffrement Symétrique</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    #container {
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      width: 50%; 
+      max-width: 600px; 
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around; 
+      text-align: left;
+    }
+    h1, h2 {
+      margin-left: 10%;
+    }
+
+    textarea {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      width: 80%; 
+      height: 100px; 
+      align-self: center;
+      resize: vertical;
+    }
+
+    input {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      width: 80%;
+      align-self: center;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #23a6d5;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      border-radius: 10px;
+    }
+
+    button:hover {
+      background-color: #23d5ab;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+    <script>
+        async function sendRequest(endpoint) {
+          clearResult();
+          const message = document.getElementById('message').value;
+          const key = document.getElementById('key').value;
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message, key }),
+          });
+          const data = await response.text();
+    
+          if (response.ok) {
+            document.getElementById('result').innerText = data;
+          } else {
+            document.getElementById('result').innerText = `Erreur : ${data}`;
+          }
+        }
+    
+        function encrypt() {
+          sendRequest('/encrypt');
+        }
+    
+        function decrypt() {
+          sendRequest('/decrypt');
+        }
+    
+        function toggleKeyVisibility() {
+          let keyInput = document.getElementById('key');
+          if (keyInput.type === "password") {
+            keyInput.type = "text";
+          } else {
+            keyInput.type = "password";
+          }
+        }
+    
+        function clearResult() {
+          document.getElementById('result').innerText = '';
+        }
+      </script>
+</head>
+<body>
+    <div id="container">
+      <h1>Chiffrement Symétrique</h1>
+      <textarea id="message" placeholder="Votre message" oninput="clearResult()"></textarea>
+      <input type="password" id="key" placeholder="Clé partagée">
+      <div class="buttons">
+        <button onclick="encrypt()">Chiffrer</button>
+        <button onclick="decrypt()">Déchiffrer</button>
+      </div>
+      <h2>Résultat :</h2>
+      <textarea id="result" placeholder="Résultat" readonly></textarea>
+    </div>
+  </body>
+</html>
